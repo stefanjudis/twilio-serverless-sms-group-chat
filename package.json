@@ -1,0 +1,21 @@
+{
+  "name": "twilio-serverless-sms-group-chat",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "twilio-run deploy --force",
+    "dev": "twilio-run --env --live --ngrok",
+    "start": "twilio-run --env",
+    "setup": "./scripts/setup.sh"
+  },
+  "devDependencies": {
+    "twilio-run": "^2.0.0-rc.5"
+  },
+  "engines": {
+    "node": "8.10.0"
+  },
+  "dependencies": {
+    "twilio": "^3.33.2"
+  }
+}
