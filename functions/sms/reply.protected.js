@@ -13,10 +13,9 @@ function getGroupedParticipants(participants, participantNumber) {
   );
 }
 
-function sendGroupMessage(participants, message) {
+function sendGroupMessage(participants, { client, from, message }) {
   return Promise.all(
     participants.map(({ number: to }) => {
-      const from = process.env.GROUP_SMS_NUMBER;
       return client.messages.create({ body: message, from, to });
     })
   );
@@ -62,7 +61,10 @@ const COMMANDS = {
   leave: {
     desc: 'Leave the SMS group chat',
     example: '/leave',
-    getResponse: async (args, { document, senderNumber, twiml }) => {
+    getResponse: async (
+      args,
+      { client, document, groupSmsNumber, senderNumber, twiml }
+    ) => {
       const {
         activeParticipant: removedParticipant,
         participants: updatedParticipants
@@ -71,10 +73,11 @@ const COMMANDS = {
       document.data.participants = updatedParticipants;
       await document.update({ data: document.data });
 
-      await sendGroupMessage(
-        updatedParticipants,
-        `${removedParticipant.name} left the group...`
-      );
+      await sendGroupMessage(updatedParticipants, {
+        client,
+        from: groupSmsNumber,
+        message: `${removedParticipant.name} left the group...`
+      });
 
       return "You left the group chat and won't receive more messages...";
     }
@@ -104,8 +107,8 @@ exports.handler = function(context, event, callback) {
   const senderMsg = event.Body;
 
   client.sync
-    .services(process.env.SYNC_SERVICE_SID)
-    .documents(process.env.SYNC_DOCUMENT_SID)
+    .services(context.SYNC_SERVICE_SID)
+    .documents(context.SYNC_DOCUMENT_SID)
     .fetch()
     .then(async document => {
       const isCommand = senderMsg.startsWith('/');
@@ -126,7 +129,9 @@ exports.handler = function(context, event, callback) {
         try {
           twiml.message(
             await COMMANDS[baseCommand].getResponse(args, {
+              client,
               document,
+              groupSmsNumber: context.GROUP_SMS_NUMBER,
               senderNumber
             })
           );
@@ -146,12 +151,12 @@ exports.handler = function(context, event, callback) {
           senderNumber
         );
 
-        sendGroupMessage(
-          participants,
-          `${activeParticipant.name}: ${senderMsg}`
-        )
+        sendGroupMessage(participants, {
+          client,
+          from: context.GROUP_SMS_NUMBER,
+          message: `${activeParticipant.name}: ${senderMsg}`
+        })
           .then(messages => {
-            console.log(messages);
             callback(null, '');
           })
           .catch(e => {
