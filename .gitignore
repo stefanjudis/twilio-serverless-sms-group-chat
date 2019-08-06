@@ -89,3 +89,6 @@ typings/
 
 # twilio stuff
 .twilio-functions
+
+# vscode
+.vscode
