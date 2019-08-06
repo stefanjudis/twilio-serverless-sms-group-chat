@@ -33,9 +33,7 @@ echo $SYNC_DOCUMENT_SID
 twilio api:sync:v1:services:documents:update --service-sid=$SYNC_SERVICE_SID --sid=$SYNC_DOCUMENT_SID --data="{ \"groupChatNumber\": \"$TWILIO_NUMBER\", participants: [{ \"name\": \"$MY_NAME\", \"number\": \"$MY_PHONE_NUMBER\" }]}"
 
 echo "Writing .env file"
-echo -e "ACCOUNT_SID=$ACCOUNT_SID\nAUTH_TOKEN=$AUTH_TOKEN\nTWILIO_NUMBER=$TWILIO_NUMBER\nSYNC_SERVICE_SID=$SYNC_SERVICE_SID\nSYNC_DOCUMENT_SID=$SYNC_DOCUMENT_SID" > .env
-
-
+echo -e "TWILIO_NUMBER=$TWILIO_NUMBER\nSYNC_SERVICE_SID=$SYNC_SERVICE_SID\nSYNC_DOCUMENT_SID=$SYNC_DOCUMENT_SID" > .env
 
 DEPLOY_OUTPUT=$(twilio serverless:deploy --force)
 SMS_ENDPOINT_URL=$(echo $DEPLOY_OUTPUT | grep -o "https://.*/sms/reply")
