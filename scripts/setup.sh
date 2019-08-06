@@ -1,12 +1,6 @@
 #!/bin/bash
 set -e
 
-# load environment vars defined .env file
-set -o allexport
-source .env
-set +o allexport
-
-
 if [ -z "$MY_NAME" ] || [ -z "$MY_PHONE_NUMBER" ]
 then
   echo 'Missing variable... :/';
