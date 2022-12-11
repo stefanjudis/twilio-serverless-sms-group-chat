@@ -10,7 +10,7 @@
     "setup": "./scripts/setup.sh"
   },
   "devDependencies": {
-    "twilio-run": "^2.0.0-rc.5"
+    "twilio-run": "^2.9.0"
   },
   "engines": {
     "node": "8.10.0"
